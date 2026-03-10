@@ -1,15 +1,22 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::post('/login', [AuthController::class, 'login']);
 
-// apiResource me sirve para que laravel identifique en automatico a que metodo pertenece, de
-// esta manera evito manejar los diferentes metodos,
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('products', ProductController::class );
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Sesión
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    // /me 👆 útil para que React sepa qué usuario está en sesión
+
+    // Categorías y Productos
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('products', ProductController::class);
+});
