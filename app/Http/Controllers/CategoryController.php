@@ -2,60 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Traits\ApiRespuesta;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use ApiRespuesta;
+
+    // GET /api/categories
     public function index()
     {
-        return Category::all();
+        $categorias = Category::with('productos')->get();
+
+        return $this->exitoso($categorias);
     }
 
-    public function store(Request $request){
-
-    $validado = $request->validate([
-        'name' => 'required|unique:categories|max:255',
-        'description' => 'nullable'
-    ]);
-    $categoria= Category::create($validado);
-
-    return response() -> json($categoria, 201);
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // POST /api/categories
+    public function store(Request $request)
     {
-        //
+        $validado = $request->validate([
+            'nombre' => 'required|unique:categories,nombre|max:255',
+            'descripcion' => 'nullable|string',
+            'activo' => 'boolean',
+        ]);
+
+        $categoria = Category::create($validado);
+
+        return $this->exitoso($categoria, 'Categoría creada correctamente', 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // GET /api/categories/{id}
+    public function show(Category $category)
+    {
+        return $this->exitoso($category);
+    }
+
+    // PUT /api/categories/{id}
     public function update(Request $request, Category $category)
     {
-        $data = $request->validate([
-        'name' => 'required|string|unique:categories,name,' . $category->id,
-        'description' => 'nullable'
-    ]);
-    $category->update($data);
+        $validado = $request->validate([
+            'nombre' => 'sometimes|string|unique:categories,nombre,'.$category->id,
+            'descripcion' => 'nullable|string',
+            'activo' => 'boolean',
+        ]);
 
-    return response()->json([
-        'message' => 'Categoría actualizada con éxito',
-        'data' => $category
-    ], 200);
+        $category->update($validado);
+
+        return $this->exitoso($category, 'Categoría actualizada correctamente');
     }
 
-
+    // DELETE /api/categories/{id}
     public function destroy(Category $category)
     {
-    $category->delete();
-    return response()->json(['message' => 'Eliminado correctamente'], 200);
+        $category->delete();
+
+        return $this->exitoso(null, 'Categoría eliminada correctamente');
     }
 }
