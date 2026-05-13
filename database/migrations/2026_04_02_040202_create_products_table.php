@@ -19,8 +19,6 @@ return new class extends Migration
 
             $table->string('nombre');
 
-            $table->text('descripcion')->nullable();
-
             $table->decimal('precioVenta', 12, 2);
             // decimal(12,2) 👆 hasta 12 dígitos con 2 decimales
 

@@ -10,7 +10,6 @@ class Product extends Model
         'sku',
         'codigoBarras',
         'nombre',
-        'descripcion',
         'precioVenta',
         'precioCosto',
         'stock',
