@@ -4,12 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SalesController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-
-
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::apiResource('sales', SalesController::class);
 
     // Sesión
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -19,4 +20,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Categorías y Productos
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
+
 });
